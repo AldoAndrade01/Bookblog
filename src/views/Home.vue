@@ -4,6 +4,12 @@
       <h1>Bienvenido al <span class="highlight">Blog de Reseñas de Libros</span> 📚</h1>
     </el-card>
 
+    <!-- Quote Section -->
+    <el-card class="quote-card" shadow="hover">
+      <p class="quote">{{ quote.quote }}</p>
+      <p class="author">- {{ quote.author }}</p>
+    </el-card>
+
     <div class="reviews-container" v-if="reviews.length > 0">
       <el-row :gutter="20">
         <el-col :span="8" v-for="review in reviews" :key="review.id">
@@ -35,6 +41,9 @@ const router = useRouter();
 // Estado de reseñas
 const reviews = ref([]);
 
+// Estado de la cita
+const quote = ref({ quote: '', author: '' });
+
 // Obtener reseñas desde Supabase
 const fetchReviews = async () => {
   const { data, error } = await supabase
@@ -51,7 +60,21 @@ const fetchReviews = async () => {
   }
 };
 
-onMounted(fetchReviews);
+// Obtener cita desde la API
+const fetchQuote = async () => {
+  try {
+    const response = await fetch('https://frasesapi-23qi.onrender.com/quote');
+    const data = await response.json();
+    quote.value = data;
+  } catch (error) {
+    console.error('Error fetching quote:', error);
+  }
+};
+
+onMounted(() => {
+  fetchReviews();
+  fetchQuote();
+});
 
 // Truncar contenido
 const truncateContent = (content, length = 100) => {
@@ -85,5 +108,19 @@ const goToReview = (id) => {
 }
 .el-empty {
   margin-top: 40px;
+}
+.quote-card {
+  margin: 20px 0;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+.quote {
+  font-size: 1.2rem;
+  font-style: italic;
+}
+.author {
+  font-size: 1rem;
+  color: #555;
 }
 </style>
