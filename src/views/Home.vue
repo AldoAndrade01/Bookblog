@@ -63,13 +63,16 @@ const fetchReviews = async () => {
 // Obtener cita desde la API
 const fetchQuote = async () => {
   try {
-    const response = await fetch('https://frasesapi-23qi.onrender.com/quote');
+    const response = await fetch("https://frasesapi-23qi.onrender.com/quote");
+    if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+
     const data = await response.json();
-    quote.value = data;
+    quote.value = data; // Guardamos la frase y el autor
   } catch (error) {
-    console.error('Error fetching quote:', error);
+    console.error("Error fetching quote:", error);
   }
 };
+
 
 onMounted(() => {
   fetchReviews();
